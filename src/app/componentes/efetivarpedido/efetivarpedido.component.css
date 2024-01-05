@@ -1,0 +1,8 @@
+#btnBuscar, #btnCep{
+    margin-top: 2em;
+    width: 100%;
+
+}
+#btnModal{
+    visibility: hidden;
+}
