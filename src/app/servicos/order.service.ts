@@ -1,16 +1,16 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Pedido } from '../model/Pedido';
+import { Order } from '../model/Order';
 
 @Injectable({
   providedIn: 'root'
 })
-export class PedidoService {
+export class OrderService {
 
   constructor(private http: HttpClient) { }
 
-  public inserirNovoPedido(pedido: Pedido) {
+  public inserirNovoPedido(pedido: Order) {
     console.log(pedido)
-    return this.http.post("http://localhost:8080/pedido", pedido);
+    return this.http.post("http://localhost:8080/order", pedido);
   }
 }

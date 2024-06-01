@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ItemPedido } from 'src/app/model/ItemPedido';
-import { Pedido } from 'src/app/model/Pedido';
-import { Produto } from 'src/app/model/Produto';
-import { CarrinhoService } from 'src/app/servicos/carrinho.service';
-import { ProdutoService } from 'src/app/servicos/produto.service';
+import { itemsOrdered } from 'src/app/model/itemsOrdered';
+import { Order } from 'src/app/model/Order';
+import { Product } from 'src/app/model/Product';
+import { CartService } from 'src/app/servicos/cart.service';
+import { ProductService } from 'src/app/servicos/product.service';
 
 @Component({
   selector: 'app-detalhes',
@@ -13,13 +13,13 @@ import { ProdutoService } from 'src/app/servicos/produto.service';
 })
 export class DetalhesComponent implements OnInit {
 
-  public produtoDetalhe!: Produto;
+  public produtoDetalhe!: Product;
   public quantidade: number = 1; // Remova o @Input aqui, pois a quantidade não precisa ser uma entrada de dados
 
   constructor(private route: ActivatedRoute,
-    private service: ProdutoService,
+    private service: ProductService,
     private nav: Router,
-    private carService: CarrinhoService) { }
+    private carService: CartService) { }
 
   ngOnInit(): void {
     this.route.params.subscribe(parameter => {
@@ -28,30 +28,30 @@ export class DetalhesComponent implements OnInit {
   }
 
   public recuperaProduto(id: number) {
-    this.service.getProdutoPeloId(id).subscribe((prod: Produto) => this.produtoDetalhe = prod);
+    this.service.getProdutoPeloId(id).subscribe((prod: Product) => this.produtoDetalhe = prod);
   }
 
   public adicionarCarrinho() {
-    let pedido: Pedido;
+    let pedido: Order;
     pedido = JSON.parse(localStorage.getItem("cart")!)
 
     if (!pedido) {
-      pedido = new Pedido(); // Crie um novo pedido se não existir no localStorage
-      pedido.valorTotal = 0;
-      pedido.itensPedido = [];
+      pedido = new Order(); // Crie um novo pedido se não existir no localStorage
+      pedido.amount = 0;
+      pedido.itemsOrdered = [];
     }
 
-    let item: ItemPedido = new ItemPedido();
-    item.qtdItem = this.quantidade;
-    item.produto = this.produtoDetalhe;
-    item.precoUnitario = this.produtoDetalhe.preco;
-    item.precoTotal = item.precoUnitario * item.qtdItem;
+    let item: itemsOrdered = new itemsOrdered();
+    item.itemQty = this.quantidade;
+    item.product = this.produtoDetalhe;
+    item.unitPrice = this.produtoDetalhe.price;
+    item.totalPrice = item.unitPrice * item.itemQty;
 
-    pedido.itensPedido.push(item);
-    pedido.valorTotal = pedido.valorTotal + item.precoTotal;
+    pedido.itemsOrdered.push(item);
+    pedido.amount = pedido.amount + item.totalPrice;
 
     localStorage.setItem("cart", JSON.stringify(pedido));
-    this.carService.getNumberOfItens().next(pedido.itensPedido.length);
+    this.carService.getNumberOfItens().next(pedido.itemsOrdered.length);
 
     this.nav.navigate(["carrinho"])
   }

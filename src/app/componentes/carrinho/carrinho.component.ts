@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Pedido } from 'src/app/model/Pedido';
-import { CarrinhoService } from 'src/app/servicos/carrinho.service';
+import { Order } from 'src/app/model/Order';
+import { CartService } from 'src/app/servicos/cart.service';
 
 @Component({
   selector: 'app-carrinho',
@@ -10,10 +10,10 @@ import { CarrinhoService } from 'src/app/servicos/carrinho.service';
 })
 export class CarrinhoComponent implements OnInit {
 
-  public pedido!: Pedido;
+  public pedido!: Order;
   public empty!: boolean;
 
-  constructor(private route: Router, private carService: CarrinhoService) {
+  constructor(private route: Router, private carService: CartService) {
 
   }
 
@@ -39,19 +39,19 @@ export class CarrinhoComponent implements OnInit {
   public removerItem(idProduto: number) {
 
     let i: number;
-    for (i = 0; i < this.pedido.itensPedido.length; i++) {
-      if (this.pedido.itensPedido[i].produto.id == idProduto) {
-        alert("Remover produto " + this.pedido.itensPedido[i].produto.name)
-        this.pedido.valorTotal -= this.pedido.itensPedido[i].precoTotal
-        this.pedido.itensPedido.splice(i, 1);
+    for (i = 0; i < this.pedido.itemsOrdered.length; i++) {
+      if (this.pedido.itemsOrdered[i].product.productId == idProduto) {
+        alert("Remover produto " + this.pedido.itemsOrdered[i].product.name)
+        this.pedido.amount -= this.pedido.itemsOrdered[i].totalPrice
+        this.pedido.itemsOrdered.splice(i, 1);
       }
     }
     localStorage.setItem("cart", JSON.stringify(this.pedido))
-    this.carService.getNumberOfItens().next(this.pedido.itensPedido.length);
+    this.carService.getNumberOfItens().next(this.pedido.itemsOrdered.length);
 
   }
   public efetivar() {
-    if (this.pedido.itensPedido.length > 0) {
+    if (this.pedido.itemsOrdered.length > 0) {
       this.route.navigate(['/efetivarpedido'])
     }
     else {

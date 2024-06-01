@@ -6,8 +6,8 @@
 
         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-8 col-xl-8">
             <h3>{{ produtoDetalhe.name }}</h3>
-            <p>{{ produtoDetalhe.detalhe }}</p>
-            <h4>Preço {{ produtoDetalhe.preco | currency: 'BRL'}}</h4>
+            <p>{{ produtoDetalhe.details }}</p>
+            <h4>Preço {{ produtoDetalhe.price | currency: 'BRL'}}</h4>
 
             <input type="number" [(ngModel)]="quantidade" class="form-control" placeholder="1" value="1" max="100"
                 min="1">

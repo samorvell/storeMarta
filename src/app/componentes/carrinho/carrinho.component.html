@@ -14,41 +14,41 @@
     <div id="itens" *ngIf="empty == false">
         <div class="row">
             <div class="col-12">
-                <h3>Valor Total R$ {{pedido.valorTotal | number: '1.2-2'}}</h3>
+                <h3>Valor Total R$ {{pedido.amount| number: '1.2-2'}}</h3>
                 <br>
             </div>
         </div>
 
-        <div class="row itemPedido" *ngFor="let ITEM of pedido.itensPedido">
+        <div class="row itemPedido" *ngFor="let ITEM of pedido.itemsOrdered">
             <div class="col-xs-6 sol-sm-6 col-md-3 col-lg-2 col-xl-2">
-                <img src="{{ITEM.produto.linkFoto}}" width="80%">
+                <img src="{{ITEM.product.linkFoto}}" width="80%">
             </div>
 
             <div class="col-xs-6 sol-sm-6 col-md-4 col-lg-5 col-xl-5">
                 <label for="nome">Produto</label>
-                <h4 id="nome">{{ITEM.produto.name}} <i (click)="removerItem(ITEM.produto.id)"
+                <h4 id="nome">{{ITEM.product.name}} <i (click)="removerItem(ITEM.product.productId)"
                         class="fa-sharp fa-solid fa-trash fa-2xs"></i></h4>
             </div>
 
             <div class="col-xs-6 sol-sm-4 col-md-2 col-lg-2 col-xl-2 text-center">
                 <label for="prUni">Preço Unitário</label>
-                <h5 class="prUni">R$ {{ITEM.precoUnitario | number: '1.2-2'}}</h5>
+                <h5 class="prUni">R$ {{ITEM.unitPrice| number: '1.2-2'}}</h5>
             </div>
 
             <div class="col-xs-6 sol-sm-3 col-md-1 col-lg-1 col-xl-1 text-center">
                 <label for="qtd">Quant.</label>
-                <h5 id="qtd">{{ITEM.qtdItem}}</h5>
+                <h5 id="qtd">{{ITEM.itemQty}}</h5>
             </div>
 
             <div class="col-xs-6 sol-sm-4 col-md-3 col-lg-2 col-xl-2 text-center">
                 <label for="prTotal">Preço Total</label>
-                <h5 id="prTotal">R$ {{ITEM.precoTotal | number: '1.2-2'}} </h5>
+                <h5 id="prTotal">R$ {{ITEM.totalPrice | number: '1.2-2'}} </h5>
             </div>
 
         </div>
         <br>
 
-        <div class="row" *ngIf="pedido != null && pedido.itensPedido.length > 0">
+        <div class="row mb-3" *ngIf="pedido != null && pedido.itemsOrdered.length > 0">
             <div class="col-6 text-center">
                 <button class="btn btn-primary" (click)="continuar()">Continuar Comprando</button>
             </div>

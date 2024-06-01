@@ -1,6 +1,7 @@
 #rodape{
     padding-top: 1em;
-    background-color: rgb(212, 207, 207);
+    /*background-color: rgb(212, 207, 207);*/
+    background-image: linear-gradient(225deg, #725ef2, #5b1c68);
     padding-bottom: 1em;
     color: white;
 }

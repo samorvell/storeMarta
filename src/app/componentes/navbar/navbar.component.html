@@ -17,9 +17,10 @@
                             aria-expanded="false">
                             Categorias
                         </a>
-                        <!--Não esque as categorias aqui embaixo virão do banco-->
                         <ul class="dropdown-menu" arial_labllledby="navbarDropdown">
-                            <li *ngFor="let CAT of lista "><a class="dropdown-item" href="#">{{ CAT.name }}</a></li>
+                            <li *ngFor="let CAT of lista "><a class="dropdown-item"
+                                    [routerLink]="['/categoria/',CAT.idCategory]">{{ CAT.name }}</a>
+                            </li>
                         </ul>
                     </li>
 
@@ -29,11 +30,11 @@
                     </li>
 
                 </ul>
-                <form class="d-flex" role="search">
+                <div class="d-flex" role="search">
                     <input class="form-control me-2" type="search" placeholder="Encontre seu produto"
-                        aria-label="Search">
-                    <button class="btn"><i class="fa-solid fa-magnifying-glass fa-xl"></i></button>
-                </form>
+                        [(ngModel)]="keyword" aria-label="Search">
+                    <button class="btn" (click)="buscar()"><i class="fa-solid fa-magnifying-glass fa-xl"></i></button>
+                </div>
 
             </div>
         </div>

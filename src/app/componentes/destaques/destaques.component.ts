@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Produto } from 'src/app/model/Produto';
-import { ProdutoService } from 'src/app/servicos/produto.service';
+import { Product } from 'src/app/model/Product';
+import { ProductService } from 'src/app/servicos/product.service';
 
 @Component({
   selector: 'app-destaques',
@@ -9,18 +9,18 @@ import { ProdutoService } from 'src/app/servicos/produto.service';
 })
 export class DestaquesComponent implements OnInit {
 
-  public lista!: Produto[];
+  public lista!: Product[];
   //ITEM: any;
 
   //preciso injetar o serviço que busca o produto
-  constructor(private service: ProdutoService) {
+  constructor(private service: ProductService) {
 
   }
 
   ngOnInit(): void {
     this.service.getAllProdutos()
       .subscribe((res: Object) => { // <- Alterado para 'Object' ou o tipo correto dos dados recebidos
-        this.lista = res as Produto[]; // <- Conversão explícita para o tipo 'Produto[]'
+        this.lista = res as Product[]; // <- Conversão explícita para o tipo 'Produto[]'
       },
         err => console.log(err));
 

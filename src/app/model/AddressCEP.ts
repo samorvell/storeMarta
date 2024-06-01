@@ -1,4 +1,4 @@
-export class EnderecoCEP {
+export class AddressCEP {
     public cep!: string;
     public logradouro!: string;
     public complemento!: string;

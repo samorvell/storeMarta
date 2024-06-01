@@ -1,9 +1,11 @@
 import { JsonPipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { Categoria } from 'src/app/model/Categoria';
-import { Pedido } from 'src/app/model/Pedido';
-import { CarrinhoService } from 'src/app/servicos/carrinho.service';
-import { CategoriaService } from 'src/app/servicos/categoria.service';
+import { Router } from '@angular/router';
+import { Category } from 'src/app/model/Category';
+import { Order } from 'src/app/model/Order';
+import { BuscarprodutobykeyService } from 'src/app/servicos/buscarprodutobykey.service';
+import { CartService } from 'src/app/servicos/cart.service';
+import { CategoryService } from 'src/app/servicos/category.service';
 
 
 @Component({
@@ -14,11 +16,15 @@ import { CategoriaService } from 'src/app/servicos/categoria.service';
 
 export class NavbarComponent implements OnInit {
 
-  public lista!: Categoria[];
+  public lista!: Category[];
   public numItens!: number;
-  private pedido!: Pedido;
+  private pedido!: Order;
+  public keyword: string = "";
 
-  constructor(private service: CategoriaService, private carService: CarrinhoService) {
+  constructor(private service: CategoryService,
+    private carService: CartService,
+    private busca: BuscarprodutobykeyService,
+    private route: Router) {
 
     this.numItens = 0;
   }
@@ -29,18 +35,28 @@ export class NavbarComponent implements OnInit {
     this.pedido = JSON.parse(localStorage.getItem("cart")!)
 
     if (this.pedido) {
-      this.numItens = this.pedido.itensPedido.length;
+      this.numItens = this.pedido.itemsOrdered.length;
     }
 
     this.service.getAllCategorias()
       .subscribe((res: Object) => { // <- Alterado para 'Object' ou o tipo correto dos dados recebidos
-        this.lista = res as Categoria[]; // <- Conversão explícita para o tipo 'Produto[]'
+        this.lista = res as Category[]; // <- Conversão explícita para o tipo 'Produto[]'
       },
         err => console.log(err));
 
     this.carService.getNumberOfItens().subscribe(
       (res: number) => { this.numItens = res; }
     );
+
+  }
+
+  public buscar() {
+    //console.log(this.keyword);
+    if (this.keyword) {
+      console.log("nvabar = " + this.keyword);
+      this.busca.setKeyWord(this.keyword);
+      this.route.navigate(['/busca']);
+    }
 
   }
 

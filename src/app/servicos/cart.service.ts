@@ -4,7 +4,7 @@ import { BehaviorSubject } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
-export class CarrinhoService {
+export class CartService {
 
   private numberOfItens!: BehaviorSubject<number>;
 
