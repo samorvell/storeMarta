@@ -43,7 +43,6 @@ export class EfetivarpedidoComponent implements OnInit {
   }
 
   public exibirForm() {
-
     this.exibirPerguntaEndereco = false;
     this.exibirFormEndereco = true;
     this.client.cep = "";
@@ -53,11 +52,9 @@ export class EfetivarpedidoComponent implements OnInit {
     this.client.cidade = "";
     this.client.bairro = "";
     this.client.estado = "";
-
   }
 
   public ocultarForm() {
-
     this.exibirPerguntaEndereco = false;
     this.exibirFormEndereco = false;
   }
@@ -94,7 +91,6 @@ export class EfetivarpedidoComponent implements OnInit {
     return true;
   }
 
-
   public buscarCpf() {
     if (!this.isCPFValid()) {
       this.menssagemErro = "CPF informado é inválido, verifique!"
@@ -109,17 +105,12 @@ export class EfetivarpedidoComponent implements OnInit {
           this.msgEndereco = cli.logradouro.substr(0, 10) + "************* "
           this.visivel = true
           this.client.reset();
-
         },
         (err) => {
           if (err.status == 404) {
-            //deu certo, mas a pesquisa não encontoru o cliente com esse telefone é cliente novo
             this.visivel = true;
-
-
           } else {
             alert("Erro desconhecido " + err)
-
           }
         }
       );
@@ -130,21 +121,19 @@ export class EfetivarpedidoComponent implements OnInit {
   }
 
   public buscarCEP() {
-    this.searchCepService.buscarCEP(this.client.cep).subscribe
-      ((res: any) => {
+    this.searchCepService.buscarCEP(this.client.cep).subscribe(
+      (res: any) => {
         this.client.logradouro = res.logradouro;
         this.client.cidade = res.localidade;
         this.client.bairro = res.bairro;
         this.client.estado = res.uf;
-
       },
-        (err) => {
-          console.log("")
-          this.menssagemErro = "Informe um CEP válido, sem pontos e traços."
-          document.getElementById("btnModal")?.click();
-
-        }
-      );
+      (err) => {
+        console.log("")
+        this.menssagemErro = "Informe um CEP válido, sem pontos e traços."
+        document.getElementById("btnModal")?.click();
+      }
+    );
   }
 
   public finalizarPedido() {
@@ -177,10 +166,9 @@ export class EfetivarpedidoComponent implements OnInit {
     this.order.status = 0; // pedido inicial
 
     this.ordService.inserirNovoPedido(this.order).subscribe(
-      (res: any) => {
-        console.log('Resposta da API:', res);
+      (res: { idOrder: number }) => {
         localStorage.removeItem("cart");
-        this.carService.getNumberOfItens().next(0);
+        this.carService.setNumberOfItems(0);
 
         if (res && res.idOrder) { // Verifique se res e res.idOrder estão definidos
           this.router.navigate(["/recibo/", res.idOrder]);
@@ -195,8 +183,4 @@ export class EfetivarpedidoComponent implements OnInit {
       }
     );
   }
-
-
-
-
 }

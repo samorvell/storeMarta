@@ -1,16 +1,30 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Order } from '../model/Order';
+import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { Order } from 'src/app/model/Order';
+import { BaseService } from './base-service.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class OrderService {
+export class OrderService extends BaseService{
 
-  constructor(private http: HttpClient) { }
+  private apiUrl = "http://localhost:8080/order";
 
-  public inserirNovoPedido(pedido: Order) {
-    console.log(pedido)
-    return this.http.post("http://localhost:8080/order", pedido);
+  constructor(private http: HttpClient) {
+    super();
   }
+
+  public inserirNovoPedido(pedido: Order): Observable<{ idOrder: number }> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+
+    return this.http.post<{ idOrder: number }>(this.apiUrl, pedido, { headers }).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  
 }
