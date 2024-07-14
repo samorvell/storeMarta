@@ -22,7 +22,7 @@ export class ProductService {
    * Método para obter todos os produtos disponíveis.
    */
   public getAllProdutos(): Observable<Product[]> {
-    return this.http.get<Product[]>(`${this.apiUrl}/`)
+    return this.http.get<Product[]>(`${this.apiUrl}/all`)
       .pipe(
         catchError(this.handleError)
       );
