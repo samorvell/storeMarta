@@ -2,21 +2,19 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, catchError, throwError } from 'rxjs';
 import { Product } from '../model/Product';
+import { BaseService } from './base-service.service';
 
 
 @Injectable({
   providedIn: 'root'
 })
-export class ProductService {
+export class ProductService extends BaseService{
 
   private apiUrl = 'http://localhost:8080/product';
 
-  constructor(private http: HttpClient) { }
-
-  // public getAllProdutos() {
-  //   //console.log("Estou no PRODUTOSERVICE - ENTREI EM CONTATO COM O BACK-END")
-  //   return this.http.get("http://localhost:8080/product/")
-  // }
+  constructor(private http: HttpClient) {
+    super();
+  }
 
   /**
    * Método para obter todos os produtos disponíveis.
@@ -27,10 +25,6 @@ export class ProductService {
         catchError(this.handleError)
       );
   }
-
-  // public getProdutoPeloId(id: number): any {
-  //   return this.http.get("http://localhost:8080/product/" + id);
-  // }
 
   /**
    * Método para obter um produto pelo ID.
@@ -43,9 +37,6 @@ export class ProductService {
       );
   }
 
-  // public getProdutoPorCategoria(idCateg: number) {
-  //   return this.http.get("http://localhost:8080/product/category/" + idCateg);
-  // }
 
   /**
    * Método para obter produtos por categoria.
@@ -58,10 +49,11 @@ export class ProductService {
       );
   }
 
-  // public getProdutosPelaPalavraChave(keyword: string) {
-  //   return this.http.get("http://localhost:8080/product/search?key=" + keyword);
-  // }
-
+ 
+   /**
+   * Método para obter produtos por palavra chave.
+   * @param keyword - palavra chave
+   */
   getProdutosPelaPalavraChave(keyword: string): Observable<Product[]> {
     return this.http.get<Product[]>(`${this.apiUrl}/search?key=${keyword}`)
       .pipe(
@@ -69,13 +61,6 @@ export class ProductService {
       );
   }
 
-  /**
-   * Método para tratar erros das requisições HTTP.
-   * @param error - Erro recebido
-   */
-  private handleError(error: HttpErrorResponse): Observable<never> {
-    console.error('Ocorreu um erro:', error);
-    return throwError('Algo deu errado; por favor, tente novamente mais tarde.');
-  }
+  
 
 }

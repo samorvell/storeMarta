@@ -1,25 +1,48 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { BaseService } from './base-service.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class CartService {
+export class CartService extends BaseService{
 
-  private numberOfItens!: BehaviorSubject<number>;
+  private numberOfItems: BehaviorSubject<number>;
 
   constructor() {
-    this.numberOfItens = new BehaviorSubject<number>(0);
+    super();
+    this.numberOfItems = new BehaviorSubject<number>(0);
   }
 
-  public getNumberOfItens() {
-    return this.numberOfItens;
+  // Retorna um Observable para que outros componentes possam se inscrever
+  public getNumberOfItems(): Observable<number> {
+    return this.numberOfItems.asObservable();
   }
 
-  public setNumberOfItens(value: number) {
-    this.numberOfItens.next(value);
+  // Método para obter o valor atual sem ser um Observable
+  public getCurrentNumberOfItems(): number {
+    return this.numberOfItems.getValue();
   }
 
+  // Define o número de itens no carrinho
+  public setNumberOfItems(value: number): void {
+    if (value >= 0) {
+      this.numberOfItems.next(value);
+    } else {
+      console.error('Número de itens não pode ser negativo');
+    }
+  }
 
+  // Incrementa o número de itens no carrinho
+  public incrementItems(): void {
+    this.numberOfItems.next(this.numberOfItems.getValue() + 1);
+  }
 
+  // Decrementa o número de itens no carrinho, mas não permite valores negativos
+  public decrementItems(): void {
+    const currentValue = this.numberOfItems.getValue();
+    if (currentValue > 0) {
+      this.numberOfItems.next(currentValue - 1);
+    }
+  }
 }

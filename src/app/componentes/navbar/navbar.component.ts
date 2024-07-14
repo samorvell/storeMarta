@@ -44,7 +44,7 @@ export class NavbarComponent implements OnInit {
       },
         err => console.log(err));
 
-    this.carService.getNumberOfItens().subscribe(
+    this.carService.getNumberOfItems().subscribe(
       (res: number) => { this.numItens = res; }
     );
 

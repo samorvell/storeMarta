@@ -1,16 +1,26 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { Client } from 'src/app/model/Client';
+import { BaseService } from './base-service.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ClientService {
+export class ClientService extends BaseService{
 
-  constructor(private http: HttpClient) { }
+  private apiUrl = "http://localhost:8080/client";
 
-  public buscarClientePeloCpf(cpf: string) {
-
-    return this.http.get("http://localhost:8080/client/" + cpf)
-
+  constructor(private http: HttpClient) {
+    super();
   }
+
+  public buscarClientePeloCpf(cpf: string): Observable<Client> {
+    const url = `${this.apiUrl}/${cpf}`;
+    return this.http.get<Client>(url).pipe(
+      catchError(this.handleError)
+    );
+  }
+
 }

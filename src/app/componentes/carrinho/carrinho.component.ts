@@ -13,52 +13,41 @@ export class CarrinhoComponent implements OnInit {
   public pedido!: Order;
   public empty!: boolean;
 
-  constructor(private route: Router, private carService: CartService) {
+  constructor(private route: Router, private cartService: CartService) {}
 
+  ngOnInit(): void {
+    const cart = localStorage.getItem('cart');
+    this.pedido = cart ? JSON.parse(cart) : null;
+
+    this.empty = !this.pedido || this.pedido.itemsOrdered.length === 0;
+
+    if (!this.empty) {
+      this.cartService.setNumberOfItems(this.pedido.itemsOrdered.length);
+    }
   }
 
   public continuar() {
     this.route.navigate(["/"]);
   }
 
-  ngOnInit(): void {
-
-    this.pedido = JSON.parse(localStorage.getItem('cart')!)
-
-    if (!this.pedido) {
-      this.empty = true;
-    } else {
-
-
-      this.empty = false;
-
-    }
-
-  }
-
   public removerItem(idProduto: number) {
-
-    let i: number;
-    for (i = 0; i < this.pedido.itemsOrdered.length; i++) {
-      if (this.pedido.itemsOrdered[i].product.productId == idProduto) {
-        alert("Remover produto " + this.pedido.itemsOrdered[i].product.name)
-        this.pedido.amount -= this.pedido.itemsOrdered[i].totalPrice
-        this.pedido.itemsOrdered.splice(i, 1);
-      }
+    let index = this.pedido.itemsOrdered.findIndex(item => item.product.productId === idProduto);
+    if (index > -1) {
+      alert(`Remover produto ${this.pedido.itemsOrdered[index].product.name}`);
+      this.pedido.amount -= this.pedido.itemsOrdered[index].totalPrice;
+      this.pedido.itemsOrdered.splice(index, 1);
+      localStorage.setItem("cart", JSON.stringify(this.pedido));
+      this.cartService.setNumberOfItems(this.pedido.itemsOrdered.length);
     }
-    localStorage.setItem("cart", JSON.stringify(this.pedido))
-    this.carService.getNumberOfItens().next(this.pedido.itemsOrdered.length);
 
+    this.empty = this.pedido.itemsOrdered.length === 0;
   }
+
   public efetivar() {
     if (this.pedido.itemsOrdered.length > 0) {
-      this.route.navigate(['/efetivarpedido'])
+      this.route.navigate(['/efetivarpedido']);
+    } else {
+      this.route.navigate(['/destaques']);
     }
-    else {
-      this.route.navigate(['/destaques'])
-    }
-
   }
-
-
 }

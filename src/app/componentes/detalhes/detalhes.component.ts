@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { itemsOrdered } from 'src/app/model/itemsOrdered';
-import { Order } from 'src/app/model/Order';
 import { Product } from 'src/app/model/Product';
+import { Order } from 'src/app/model/Order';
 import { CartService } from 'src/app/servicos/cart.service';
 import { ProductService } from 'src/app/servicos/product.service';
 
@@ -14,45 +13,52 @@ import { ProductService } from 'src/app/servicos/product.service';
 export class DetalhesComponent implements OnInit {
 
   public produtoDetalhe!: Product;
-  public quantidade: number = 1; // Remova o @Input aqui, pois a quantidade não precisa ser uma entrada de dados
+  public quantidade: number = 1;
 
-  constructor(private route: ActivatedRoute,
-    private service: ProductService,
-    private nav: Router,
-    private carService: CartService) { }
+  constructor(
+    private route: ActivatedRoute,
+    private productService: ProductService,
+    private router: Router,
+    private cartService: CartService
+  ) { }
 
   ngOnInit(): void {
-    this.route.params.subscribe(parameter => {
-      this.recuperaProduto(parameter["id"]);
+    this.route.params.subscribe(params => {
+      const id = +params['id']; // Converte o parâmetro id para número
+      this.recuperaProduto(id);
     });
   }
 
   public recuperaProduto(id: number) {
-    this.service.getProdutoPeloId(id).subscribe((prod: Product) => this.produtoDetalhe = prod);
+    this.productService.getProdutoPeloId(id).subscribe(
+      (prod: Product) => {
+        this.produtoDetalhe = prod;
+      },
+      (err) => {
+        console.error('Erro ao recuperar produto:', err);
+        // Lógica de tratamento de erro, como redirecionamento para página de erro
+      }
+    );
   }
 
   public adicionarCarrinho() {
-    let pedido: Order;
-    pedido = JSON.parse(localStorage.getItem("cart")!)
+    let cartItem = localStorage.getItem("cart");
+    let order: Order = cartItem ? JSON.parse(cartItem) : new Order();
 
-    if (!pedido) {
-      pedido = new Order(); // Crie um novo pedido se não existir no localStorage
-      pedido.amount = 0;
-      pedido.itemsOrdered = [];
-    }
 
-    let item: itemsOrdered = new itemsOrdered();
-    item.itemQty = this.quantidade;
-    item.product = this.produtoDetalhe;
-    item.unitPrice = this.produtoDetalhe.price;
-    item.totalPrice = item.unitPrice * item.itemQty;
+    let item = {
+      itemQty: this.quantidade,
+      product: this.produtoDetalhe,
+      unitPrice: this.produtoDetalhe.price,
+      totalPrice: this.produtoDetalhe.price * this.quantidade
+    };
 
-    pedido.itemsOrdered.push(item);
-    pedido.amount = pedido.amount + item.totalPrice;
+    order.itemsOrdered.push(item);
+    order.amount += item.totalPrice;
 
-    localStorage.setItem("cart", JSON.stringify(pedido));
-    this.carService.getNumberOfItens().next(pedido.itemsOrdered.length);
+    localStorage.setItem("cart", JSON.stringify(order));
+    this.cartService.setNumberOfItems(order.itemsOrdered.length);
 
-    this.nav.navigate(["carrinho"])
+    this.router.navigate(["/carrinho"]);
   }
 }
