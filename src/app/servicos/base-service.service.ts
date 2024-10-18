@@ -1,6 +1,7 @@
 
 import { HttpErrorResponse } from '@angular/common/http';
-import { throwError, Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 export abstract class BaseService {
   protected handleError(error: HttpErrorResponse): Observable<never> {
@@ -12,7 +13,8 @@ export abstract class BaseService {
       // Erro no lado do servidor
       errorMessage = `Código do erro: ${error.status}\nMensagem: ${error.message}`;
     }
-    console.error(errorMessage);
-    return throwError(() => new Error('Ocorreu um erro; por favor, tente novamente mais tarde.'));
+    // Aqui, em vez de lançar um novo erro, você pode simplesmente retornar o erro
+    console.error(errorMessage); // Você pode manter essa linha para logging
+    return throwError(() => error); // Retorna o erro original
   }
 }

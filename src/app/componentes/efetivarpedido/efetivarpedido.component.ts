@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { Client } from 'src/app/model/Client';
 import { AddressCEP } from 'src/app/model/AddressCEP';
@@ -7,6 +7,10 @@ import { SearchCepService } from 'src/app/servicos/searchcep.service';
 import { CartService } from 'src/app/servicos/cart.service';
 import { ClientService } from 'src/app/servicos/client.service';
 import { OrderService } from 'src/app/servicos/order.service';
+import { catchError, of, tap } from 'rxjs';
+import { ChangeDetectorRef } from '@angular/core';
+
+
 
 @Component({
   selector: 'app-efetivarpedido',
@@ -15,17 +19,20 @@ import { OrderService } from 'src/app/servicos/order.service';
 })
 export class EfetivarpedidoComponent implements OnInit {
 
+  @ViewChild('btnModal') btnModal!: ElementRef;
+
   public client: Client;
   public achou: boolean;
   public cli!: Client;
   public visivel: boolean;
   public order: Order;
-  public menssagemErro!: string;
+  public mensagemErro!: string;
   public msgEndereco!: string;
   public exibirPerguntaEndereco!: boolean;
   public exibirFormEndereco!: boolean;
 
   constructor(private cliService: ClientService,
+    private cdRef: ChangeDetectorRef,
     private ordService: OrderService,
     private searchCepService: SearchCepService,
     private router: Router,
@@ -91,30 +98,34 @@ export class EfetivarpedidoComponent implements OnInit {
     return true;
   }
 
-  public buscarCpf() {
-    if (!this.isCPFValid()) {
-      this.menssagemErro = "CPF informado é inválido, verifique!"
-      document.getElementById("btnModal")?.click();
-      return;
-    }
+  buscarCpf() {
     this.cliService.buscarClientePeloCpf(this.client.cpf)
-      .subscribe(
-        (cli: any) => {
-          this.client = cli;
-          this.achou = true;
-          this.msgEndereco = cli.logradouro.substr(0, 10) + "************* "
-          this.visivel = true
-          this.client.reset();
-        },
-        (err) => {
-          if (err.status == 404) {
-            this.visivel = true;
-          } else {
-            alert("Erro desconhecido " + err)
-          }
-        }
-      );
+  .pipe(
+    tap((cli: any) => {
+      if (cli) {
+        this.client = cli;
+        this.achou = true;
+        this.msgEndereco = cli.logradouro.substr(0, 10) + "************* ";
+        this.visivel = true;
+        this.client.reset();
+      }
+    }),
+    catchError((err) => {
+      if (err.status === 404) {
+        this.achou = false;
+        this.visivel = true;
+        this.mensagemErro = "Bem vinda(o)! Você é nova(o) por aqui!";
+      } else {
+        this.mensagemErro = "Erro desconhecido: " + err.message;
+        this.achou = false;
+      }
+      return of(null);
+    })
+  )
+  .subscribe();
   }
+  
+
 
   public ocultaAlert() {
     this.visivel = false;
@@ -130,7 +141,7 @@ export class EfetivarpedidoComponent implements OnInit {
       },
       (err) => {
         console.log("")
-        this.menssagemErro = "Informe um CEP válido, sem pontos e traços."
+        this.mensagemErro = "Informe um CEP válido, sem pontos e traços."
         document.getElementById("btnModal")?.click();
       }
     );

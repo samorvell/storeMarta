@@ -45,6 +45,10 @@ export class DetalhesComponent implements OnInit {
     let cartItem = localStorage.getItem("cart");
     let order: Order = cartItem ? JSON.parse(cartItem) : new Order();
 
+    // Verifique se itemsOrdered é um array antes de adicionar
+    if (!Array.isArray(order.itemsOrdered)) {
+      order.itemsOrdered = []; // Se não for, inicialize como um array
+    }
 
     let item = {
       itemQty: this.quantidade,
@@ -53,12 +57,14 @@ export class DetalhesComponent implements OnInit {
       totalPrice: this.produtoDetalhe.price * this.quantidade
     };
 
-    order.itemsOrdered.push(item);
+    order.itemsOrdered.push(item); // Isso deve funcionar agora
     order.amount += item.totalPrice;
 
     localStorage.setItem("cart", JSON.stringify(order));
     this.cartService.setNumberOfItems(order.itemsOrdered.length);
 
+    console.log('Navegando para o carrinho');
     this.router.navigate(["/carrinho"]);
   }
+
 }

@@ -16,10 +16,9 @@ export class ClientService extends BaseService{
     super();
   }
 
-  public buscarClientePeloCpf(cpf: string): Observable<Client> {
-    const url = `${this.apiUrl}/${cpf}`;
-    return this.http.get<Client>(url).pipe(
-      catchError(this.handleError)
+  buscarClientePeloCpf(cpf: string): Observable<any> {
+    return this.http.get(`/api/clientes/${cpf}`).pipe(
+      catchError(this.handleError.bind(this)) // Aqui chamamos o handleError
     );
   }
 
