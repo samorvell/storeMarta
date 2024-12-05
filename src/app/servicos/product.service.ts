@@ -8,9 +8,9 @@ import { BaseService } from './base-service.service';
 @Injectable({
   providedIn: 'root'
 })
-export class ProductService extends BaseService{
+export class ProductService extends BaseService {
 
-  private apiUrl = 'http://localhost:8080/product';
+  private apiUrl = 'http://smart-sales-backend-container:8080/product';
 
   constructor(private http: HttpClient) {
     super();
@@ -49,11 +49,11 @@ export class ProductService extends BaseService{
       );
   }
 
- 
-   /**
-   * Método para obter produtos por palavra chave.
-   * @param keyword - palavra chave
-   */
+
+  /**
+  * Método para obter produtos por palavra chave.
+  * @param keyword - palavra chave
+  */
   getProdutosPelaPalavraChave(keyword: string): Observable<Product[]> {
     return this.http.get<Product[]>(`${this.apiUrl}/search?key=${keyword}`)
       .pipe(
@@ -61,6 +61,6 @@ export class ProductService extends BaseService{
       );
   }
 
-  
+
 
 }

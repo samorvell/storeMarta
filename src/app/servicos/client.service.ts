@@ -8,9 +8,9 @@ import { BaseService } from './base-service.service';
 @Injectable({
   providedIn: 'root'
 })
-export class ClientService extends BaseService{
+export class ClientService extends BaseService {
 
-  private apiUrl = "http://localhost:8080/client";
+  private apiUrl = "http://smart-sales-backend-container:8080/client";
 
   constructor(private http: HttpClient) {
     super();
